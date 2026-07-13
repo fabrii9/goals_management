@@ -6,7 +6,10 @@
         <field name="inherit_id" ref="project.view_task_form2"/>
         <field name="arch" type="xml">
             <field name="user_ids" position="after">
+                <field name="objective_id"/>
                 <field name="micro_objective_id"/>
+                <field name="is_micro_objective"/>
+                <field name="goal_id" readonly="1"/>
             </field>
         </field>
     </record>
@@ -17,7 +20,9 @@
         <field name="inherit_id" ref="project.view_task_tree2"/>
         <field name="arch" type="xml">
             <field name="user_ids" position="after">
+                <field name="objective_id" optional="show"/>
                 <field name="micro_objective_id" optional="show"/>
+                <field name="is_micro_objective" optional="hide"/>
                 <field name="goal_id" optional="hide"/>
             </field>
         </field>
@@ -29,6 +34,7 @@
         <field name="inherit_id" ref="project.view_task_search_form"/>
         <field name="arch" type="xml">
             <field name="user_ids" position="after">
+                <field name="objective_id"/>
                 <field name="micro_objective_id"/>
                 <field name="goal_id"/>
             </field>

@@ -197,6 +197,11 @@ class GoalsGoal(models.Model):
         inverse_name='goal_id',
         string='Microobjetivos',
     )
+    task_ids = fields.One2many(
+        comodel_name='project.task',
+        inverse_name='objective_id',
+        string='Tareas',
+    )
 
     # -------------------------------------------------------------------------
     # Indicadores computados
@@ -309,16 +314,17 @@ class GoalsGoal(models.Model):
         'child_ids.weight',
         'micro_objective_ids.progress',
         'micro_objective_ids.weight',
+        'task_ids.is_closed',
     )
     def _compute_progress(self):
-        """Calcula el progreso según el modo y los hijos/microobjetivos."""
+        """Calcula el progreso según el modo y los hijos/microobjetivos/tareas."""
         for goal in self:
             if goal.progress_mode == 'manual':
                 goal.progress = max(0.0, min(100.0, goal.manual_progress))
                 continue
 
             if goal.period_type == 'week':
-                goal.progress = goal._compute_progress_from_micro_objectives()
+                goal.progress = goal._compute_progress_from_weekly_items()
             else:
                 goal.progress = goal._compute_progress_from_children()
 
@@ -336,21 +342,39 @@ class GoalsGoal(models.Model):
         )
         return min(100.0, max(0.0, weighted_progress / total_weight))
 
-    def _compute_progress_from_micro_objectives(self):
-        """Promedio ponderado de progresos de microobjetivos."""
+    def _compute_progress_from_weekly_items(self):
+        """Promedio ponderado de microobjetivos, tareas y tickets."""
         self.ensure_one()
-        micros = self.micro_objective_ids.filtered(
-            lambda m: m.state != 'cancelled'
-        )
-        if not micros:
+        contributions = self._get_weekly_progress_contributions()
+        if not contributions:
             return 0.0
-        total_weight = sum(micros.mapped('weight'))
+        total_weight = sum(weight for _, _, weight in contributions)
         if not total_weight:
             return 0.0
         weighted_progress = sum(
-            micro.weight * micro.progress for micro in micros
+            ((completed / total) * 100.0 if total else 0.0) * weight
+            for completed, total, weight in contributions
         )
         return min(100.0, max(0.0, weighted_progress / total_weight))
+
+    def _get_weekly_progress_contributions(self):
+        """Retorna lista de (completados, total, peso) para el cálculo.
+
+        Diseñado para ser extendido por el módulo de helpdesk y agregar
+        contribuciones de tickets.
+        """
+        self.ensure_one()
+        contributions = []
+        micros = self.micro_objective_ids.filtered(
+            lambda m: m.state != 'cancelled'
+        )
+        for micro in micros:
+            contributions.append((micro.progress / 100.0, 1.0, micro.weight))
+        tasks = self.task_ids.filtered(lambda t: t.active)
+        if tasks:
+            completed = sum(1 for task in tasks if task.is_closed)
+            contributions.append((completed, len(tasks), 1.0))
+        return contributions
 
     # -------------------------------------------------------------------------
     # Indicadores
@@ -358,25 +382,16 @@ class GoalsGoal(models.Model):
     @api.depends(
         'micro_objective_ids.task_ids',
         'micro_objective_ids.task_ids.is_closed',
+        'task_ids',
+        'task_ids.is_closed',
     )
     def _compute_tasks_count(self):
         for goal in self:
-            tasks = goal.micro_objective_ids.mapped('task_ids')
+            tasks = goal.micro_objective_ids.mapped('task_ids') | goal.task_ids
             goal.tasks_count = len(tasks)
             goal.completed_tasks_count = sum(
                 1 for task in tasks if task.is_closed
             )
-
-    @api.depends(
-        'micro_objective_ids.task_ids',
-        'micro_objective_ids.task_ids.planned_hours',
-        'micro_objective_ids.task_ids.effective_hours',
-    )
-    def _compute_hours(self):
-        for goal in self:
-            tasks = goal.micro_objective_ids.mapped('task_ids')
-            goal.estimated_hours = sum(tasks.mapped('planned_hours') or [0.0])
-            goal.worked_hours = sum(tasks.mapped('effective_hours') or [0.0])
 
     @api.depends('date_end', 'state')
     def _compute_is_overdue(self):
@@ -387,6 +402,23 @@ class GoalsGoal(models.Model):
                 and goal.date_end
                 and goal.date_end < today
             )
+
+    def _goals_weekly_can_be_completed(self):
+        """Verifica si el objetivo semanal puede marcarse como completado.
+
+        Retorna True si todas las tareas directas están cerradas y todos los
+        microobjetivos activos están completos. El módulo puente de helpdesk
+        extiende este método para incluir tickets.
+        """
+        self.ensure_one()
+        if self.period_type != 'week':
+            return False
+        tasks = self.task_ids.filtered(lambda t: t.active)
+        all_tasks_closed = all(task.is_closed for task in tasks) if tasks else True
+        micros = self.micro_objective_ids.filtered(lambda m: m.state != 'cancelled')
+        all_micros_done = all(m.state == 'done' for m in micros) if micros else True
+        has_items = tasks or micros
+        return has_items and all_tasks_closed and all_micros_done
 
     # -------------------------------------------------------------------------
     # Write y automatización

@@ -11,4 +11,5 @@ from . import goals_achievement
 from . import res_users
 from . import res_config_settings
 from . import project_task
+from . import goals_link_task_wizard
 from . import calendar_event

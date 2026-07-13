@@ -17,3 +17,5 @@ access_goals_xp_log_user,goals.xp.log.user,model_goals_xp_log,group_goals_user,1
 access_goals_xp_log_manager,goals.xp.log.manager,model_goals_xp_log,group_goals_manager,1,1,1,1
 access_goals_achievement_user,goals.achievement.user,model_goals_achievement,group_goals_user,1,0,0,0
 access_goals_achievement_manager,goals.achievement.manager,model_goals_achievement,group_goals_manager,1,1,1,1
+access_goals_link_task_wizard_user,goals.link.task.wizard.user,model_goals_link_task_wizard,group_goals_user,1,1,1,1
+access_goals_link_task_wizard_manager,goals.link.task.wizard.manager,model_goals_link_task_wizard,group_goals_manager,1,1,1,1

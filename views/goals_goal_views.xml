@@ -105,6 +105,20 @@
                         <page string="Microobjetivos" invisible="period_type != 'week'">
                             <field name="micro_objective_ids"/>
                         </page>
+                        <page name="page_tasks" string="Tareas" invisible="period_type != 'week'">
+                            <div class="oe_button_box" name="task_buttons">
+                                <button name="%(action_goals_link_task_wizard)d" type="action" string="Vincular tareas existentes" class="btn btn-secondary" invisible="period_type != 'week'"/>
+                            </div>
+                            <field name="task_ids">
+                                <list string="Tareas" editable="bottom">
+                                    <field name="name"/>
+                                    <field name="project_id" optional="show"/>
+                                    <field name="stage_id" optional="show"/>
+                                    <field name="user_ids" widget="many2many_avatar_user" optional="show"/>
+                                    <field name="is_closed" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
                         <page string="Inteligencia" groups="base.group_no_one">
                             <group>
                                 <field name="ai_suggested_priority"/>
