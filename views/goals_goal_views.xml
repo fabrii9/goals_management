@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vistas de objetivos estratégicos -->
+    <record id="view_goals_goal_tree" model="ir.ui.view">
+        <field name="name">goals.goal.tree</field>
+        <field name="model">goals.goal</field>
+        <field name="arch" type="xml">
+            <list string="Objetivos">
+                <field name="name"/>
+                <field name="period_type"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="priority" widget="priority"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'" decoration-warning="state == 'active'" decoration-muted="state == 'cancelled'"/>
+                <field name="is_overdue" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_goals_goal_kanban" model="ir.ui.view">
+        <field name="name">goals.goal.kanban</field>
+        <field name="model">goals.goal</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="period_type"/>
+                <field name="progress"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="color"/>
+                <field name="date_end"/>
+                <field name="is_overdue"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click border-start border-4 {{ record.is_overdue.raw_value ? 'border-danger' : 'border-primary' }}">
+                            <div class="oe_kanban_content p-2">
+                                <div class="o_kanban_record_title fw-bold">
+                                    <field name="name"/>
+                                </div>
+                                <div class="text-muted small">
+                                    <field name="period_type"/>
+                                    <span class="ms-2"><field name="date_end"/></span>
+                                </div>
+                                <div class="mt-2">
+                                    <field name="progress" widget="progressbar" options="{'edit': false}"/>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="priority" widget="priority"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_goals_goal_form" model="ir.ui.view">
+        <field name="name">goals.goal.form</field>
+        <field name="model">goals.goal</field>
+        <field name="arch" type="xml">
+            <form string="Objetivo">
+                <header>
+                    <button name="action_activate" string="Activar" type="object" invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_done" string="Completar" type="object" invisible="state not in ('draft', 'active')" class="btn-success"/>
+                    <button name="action_cancel" string="Cancelar" type="object" invisible="state == 'cancelled'"/>
+                    <button name="action_reset_to_draft" string="Volver a borrador" type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Objetivo"/>
+                        <h1><field name="name" placeholder="Nombre del objetivo..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="period_type"/>
+                            <field name="parent_id" options="{'no_create': True}"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="team_member_ids" widget="many2many_avatar_user"/>
+                            <field name="category_id"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="priority" widget="priority"/>
+                            <field name="impact"/>
+                            <field name="weight"/>
+                            <field name="progress_mode"/>
+                            <field name="manual_progress" invisible="progress_mode != 'manual'"/>
+                            <field name="progress" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción">
+                            <field name="description" options="{'collaborative': true}"/>
+                        </page>
+                        <page string="Subobjetivos" invisible="period_type == 'week'">
+                            <field name="child_ids"/>
+                        </page>
+                        <page string="Microobjetivos" invisible="period_type != 'week'">
+                            <field name="micro_objective_ids"/>
+                        </page>
+                        <page string="Inteligencia" groups="base.group_no_one">
+                            <group>
+                                <field name="ai_suggested_priority"/>
+                                <field name="ai_stuck_score"/>
+                                <field name="ai_estimated_end_date"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_goals_goal_calendar" model="ir.ui.view">
+        <field name="name">goals.goal.calendar</field>
+        <field name="model">goals.goal</field>
+        <field name="arch" type="xml">
+            <calendar string="Objetivos" date_start="date_start" date_stop="date_end" color="color" event_open_popup="true" mode="month">
+                <field name="name"/>
+                <field name="period_type"/>
+                <field name="progress"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_goals_goal_pivot" model="ir.ui.view">
+        <field name="name">goals.goal.pivot</field>
+        <field name="model">goals.goal</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de objetivos">
+                <field name="period_type" type="row"/>
+                <field name="state" type="col"/>
+                <field name="progress" type="measure" avg="1"/>
+                <field name="tasks_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_goals_goal_graph" model="ir.ui.view">
+        <field name="name">goals.goal.graph</field>
+        <field name="model">goals.goal</field>
+        <field name="arch" type="xml">
+            <graph string="Avance de objetivos" type="bar">
+                <field name="period_type"/>
+                <field name="progress" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_goals_goal_search" model="ir.ui.view">
+        <field name="name">goals.goal.search</field>
+        <field name="model">goals.goal</field>
+        <field name="arch" type="xml">
+            <search string="Buscar objetivos">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="category_id"/>
+                <field name="tag_ids"/>
+                <filter string="Activos" name="active_state" domain="[('state', '=', 'active')]"/>
+                <filter string="Completados" name="done_state" domain="[('state', '=', 'done')]"/>
+                <filter string="Vencidos" name="overdue" domain="[('is_overdue', '=', True)]"/>
+                <separator/>
+                <filter string="Período" name="group_period" context="{'group_by': 'period_type'}"/>
+                <filter string="Responsable" name="group_user" context="{'group_by': 'user_id'}"/>
+                <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acciones -->
+    <record id="action_goals_year" model="ir.actions.act_window">
+        <field name="name">Metas Anuales</field>
+        <field name="res_model">goals.goal</field>
+        <field name="view_mode">kanban,list,form,calendar,activity,pivot,graph</field>
+        <field name="domain">[('period_type', '=', 'year')]</field>
+        <field name="context">{'default_period_type': 'year'}</field>
+        <field name="search_view_id" ref="view_goals_goal_search"/>
+    </record>
+
+    <record id="action_goals_quarter" model="ir.actions.act_window">
+        <field name="name">Objetivos Trimestrales</field>
+        <field name="res_model">goals.goal</field>
+        <field name="view_mode">kanban,list,form,calendar,activity,pivot,graph</field>
+        <field name="domain">[('period_type', '=', 'quarter')]</field>
+        <field name="context">{'default_period_type': 'quarter'}</field>
+        <field name="search_view_id" ref="view_goals_goal_search"/>
+    </record>
+
+    <record id="action_goals_month" model="ir.actions.act_window">
+        <field name="name">Objetivos Mensuales</field>
+        <field name="res_model">goals.goal</field>
+        <field name="view_mode">kanban,list,form,calendar,activity,pivot,graph</field>
+        <field name="domain">[('period_type', '=', 'month')]</field>
+        <field name="context">{'default_period_type': 'month'}</field>
+        <field name="search_view_id" ref="view_goals_goal_search"/>
+    </record>
+
+    <record id="action_goals_week" model="ir.actions.act_window">
+        <field name="name">Objetivos Semanales</field>
+        <field name="res_model">goals.goal</field>
+        <field name="view_mode">kanban,list,form,calendar,activity,pivot,graph</field>
+        <field name="domain">[('period_type', '=', 'week')]</field>
+        <field name="context">{'default_period_type': 'week'}</field>
+        <field name="search_view_id" ref="view_goals_goal_search"/>
+    </record>
+
+    <record id="action_goals_all" model="ir.actions.act_window">
+        <field name="name">Todos los Objetivos</field>
+        <field name="res_model">goals.goal</field>
+        <field name="view_mode">kanban,list,form,calendar,activity,pivot,graph</field>
+        <field name="search_view_id" ref="view_goals_goal_search"/>
+    </record>
+</odoo>

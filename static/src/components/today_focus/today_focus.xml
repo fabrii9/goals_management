@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="goals_management.TodayFocus">
+        <div class="o_goals_today_focus">
+            <h4 class="h5 mb-3">Hoy</h4>
+            <div t-if="!state.focusList.length" class="text-muted">
+                No hay focos definidos para hoy.
+            </div>
+            <div t-foreach="state.focusList" t-as="focus" t-key="focus.id" class="o_goals_focus_item d-flex align-items-center gap-3 p-3 mb-2 border rounded bg-view">
+                <button type="button"
+                        class="o_goals_focus_check btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0"
+                        t-on-click="() => this.toggleFocus(focus)">
+                    <i t-if="focus.state === 'done'" class="fa fa-check text-success"/>
+                </button>
+                <span t-att-class="getStateClass(focus)" class="flex-grow-1 fs-5" t-esc="focus.name"/>
+            </div>
+        </div>
+    </t>
+</templates>

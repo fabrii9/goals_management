@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_project_task_form_inherit_goals" model="ir.ui.view">
+        <field name="name">project.task.form.inherit.goals</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <field name="user_ids" position="after">
+                <field name="micro_objective_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_project_task_tree_inherit_goals" model="ir.ui.view">
+        <field name="name">project.task.tree.inherit.goals</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_tree2"/>
+        <field name="arch" type="xml">
+            <field name="user_ids" position="after">
+                <field name="micro_objective_id" optional="show"/>
+                <field name="goal_id" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_project_task_search_inherit_goals" model="ir.ui.view">
+        <field name="name">project.task.search.inherit.goals</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_search_form"/>
+        <field name="arch" type="xml">
+            <field name="user_ids" position="after">
+                <field name="micro_objective_id"/>
+                <field name="goal_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

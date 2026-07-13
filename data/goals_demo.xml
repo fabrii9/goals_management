@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Categorías -->
+        <record id="goals_category_growth" model="goals.category">
+            <field name="name">Crecimiento</field>
+            <field name="color">1</field>
+        </record>
+        <record id="goals_category_operations" model="goals.category">
+            <field name="name">Operaciones</field>
+            <field name="color">2</field>
+        </record>
+        <record id="goals_category_learning" model="goals.category">
+            <field name="name">Aprendizaje</field>
+            <field name="color">3</field>
+        </record>
+
+        <!-- Etiquetas -->
+        <record id="goals_tag_urgent" model="goals.tag">
+            <field name="name">Urgente</field>
+            <field name="color">1</field>
+        </record>
+        <record id="goals_tag_strategic" model="goals.tag">
+            <field name="name">Estratégico</field>
+            <field name="color">2</field>
+        </record>
+        <record id="goals_tag_team" model="goals.tag">
+            <field name="name">Equipo</field>
+            <field name="color">3</field>
+        </record>
+
+        <!-- Insignias -->
+        <record id="goals_badge_first_task" model="goals.badge">
+            <field name="name">Primera Tarea</field>
+            <field name="description">Completaste tu primera tarea vinculada a un objetivo.</field>
+            <field name="icon_class">fa fa-check-circle</field>
+            <field name="xp_amount">50</field>
+        </record>
+        <record id="goals_badge_streak_7" model="goals.badge">
+            <field name="name">Racha de 7 días</field>
+            <field name="description">Mantuviste actividad durante 7 días consecutivos.</field>
+            <field name="icon_class">fa fa-fire</field>
+            <field name="xp_amount">200</field>
+        </record>
+
+        <!-- Meta anual -->
+        <record id="goal_year_demo" model="goals.goal">
+            <field name="name">Consolidar liderazgo regional</field>
+            <field name="description">Convertir a la empresa en referente del sector.</field>
+            <field name="period_type">year</field>
+            <field name="date_start" eval="DateTime.today().replace(month=1, day=1).date()"/>
+            <field name="date_end" eval="DateTime.today().replace(month=12, day=31).date()"/>
+            <field name="state">active</field>
+            <field name="priority">5</field>
+            <field name="impact">high</field>
+            <field name="category_id" ref="goals_category_growth"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('goals_tag_strategic')])]"/>
+        </record>
+
+        <!-- Objetivo trimestral -->
+        <record id="goal_quarter_demo" model="goals.goal">
+            <field name="name">Expandir cartera de clientes</field>
+            <field name="period_type">quarter</field>
+            <field name="parent_id" ref="goal_year_demo"/>
+            <field name="date_start" eval="DateTime.today().replace(month=1, day=1).date()"/>
+            <field name="date_end" eval="DateTime.today().replace(month=3, day=31).date()"/>
+            <field name="state">active</field>
+            <field name="priority">4</field>
+            <field name="impact">high</field>
+            <field name="category_id" ref="goals_category_growth"/>
+        </record>
+
+        <!-- Objetivo mensual -->
+        <record id="goal_month_demo" model="goals.goal">
+            <field name="name">Lanzar campaña de prospección</field>
+            <field name="period_type">month</field>
+            <field name="parent_id" ref="goal_quarter_demo"/>
+            <field name="date_start" eval="DateTime.today().replace(day=1).date()"/>
+            <field name="date_end" eval="(DateTime.today().replace(day=1) + relativedelta(months=1, days=-1)).date()"/>
+            <field name="state">active</field>
+            <field name="priority">4</field>
+            <field name="impact">medium</field>
+            <field name="category_id" ref="goals_category_growth"/>
+        </record>
+
+        <!-- Objetivo semanal -->
+        <record id="goal_week_demo" model="goals.goal">
+            <field name="name">Cerrar propuestas pendientes</field>
+            <field name="period_type">week</field>
+            <field name="parent_id" ref="goal_month_demo"/>
+            <field name="date_start" eval="(DateTime.today() - timedelta(days=DateTime.today().weekday())).date()"/>
+            <field name="date_end" eval="(DateTime.today() + timedelta(days=6-DateTime.today().weekday())).date()"/>
+            <field name="state">active</field>
+            <field name="priority">5</field>
+            <field name="impact">high</field>
+            <field name="category_id" ref="goals_category_growth"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('goals_tag_urgent')])]"/>
+        </record>
+
+        <!-- Microobjetivos -->
+        <record id="micro_demo_1" model="goals.micro.objective">
+            <field name="name">Llamar a clientes potenciales</field>
+            <field name="goal_id" ref="goal_week_demo"/>
+            <field name="date_start" eval="(DateTime.today() - timedelta(days=DateTime.today().weekday())).date()"/>
+            <field name="date_end" eval="(DateTime.today() + timedelta(days=6-DateTime.today().weekday())).date()"/>
+            <field name="state">active</field>
+            <field name="priority">5</field>
+            <field name="impact">high</field>
+            <field name="weight">2</field>
+        </record>
+        <record id="micro_demo_2" model="goals.micro.objective">
+            <field name="name">Preparar material de capacitación</field>
+            <field name="goal_id" ref="goal_week_demo"/>
+            <field name="date_start" eval="(DateTime.today() - timedelta(days=DateTime.today().weekday())).date()"/>
+            <field name="date_end" eval="(DateTime.today() + timedelta(days=6-DateTime.today().weekday())).date()"/>
+            <field name="state">active</field>
+            <field name="priority">3</field>
+            <field name="impact">medium</field>
+            <field name="weight">1</field>
+            <field name="category_id" ref="goals_category_learning"/>
+        </record>
+
+        <!-- Tareas de proyecto vinculadas -->
+        <record id="task_demo_1" model="project.task">
+            <field name="name">Llamar cliente A</field>
+            <field name="project_id" ref="project.project_project_1"/>
+            <field name="micro_objective_id" ref="micro_demo_1"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+        <record id="task_demo_2" model="project.task">
+            <field name="name">Llamar cliente B</field>
+            <field name="project_id" ref="project.project_project_1"/>
+            <field name="micro_objective_id" ref="micro_demo_1"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+        <record id="task_demo_3" model="project.task">
+            <field name="name">Preparar presentación</field>
+            <field name="project_id" ref="project.project_project_1"/>
+            <field name="micro_objective_id" ref="micro_demo_2"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+    </data>
+</odoo>

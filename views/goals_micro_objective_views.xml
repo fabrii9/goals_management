@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_goals_micro_objective_tree" model="ir.ui.view">
+        <field name="name">goals.micro.objective.tree</field>
+        <field name="model">goals.micro.objective</field>
+        <field name="arch" type="xml">
+            <list string="Microobjetivos">
+                <field name="name"/>
+                <field name="goal_id"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="date_end"/>
+                <field name="priority" widget="priority"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="tasks_count"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_goals_micro_objective_kanban" model="ir.ui.view">
+        <field name="name">goals.micro.objective.kanban</field>
+        <field name="model">goals.micro.objective</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="name"/>
+                <field name="progress"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="is_overdue"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click border-start border-4 {{ record.is_overdue.raw_value ? 'border-danger' : 'border-info' }}">
+                            <div class="oe_kanban_content p-2">
+                                <div class="o_kanban_record_title fw-bold"><field name="name"/></div>
+                                <div class="text-muted small"><field name="goal_id"/></div>
+                                <div class="mt-2"><field name="progress" widget="progressbar" options="{'edit': false}"/></div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="priority" widget="priority"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_goals_micro_objective_form" model="ir.ui.view">
+        <field name="name">goals.micro.objective.form</field>
+        <field name="model">goals.micro.objective</field>
+        <field name="arch" type="xml">
+            <form string="Microobjetivo">
+                <header>
+                    <button name="action_activate" string="Activar" type="object" invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_done" string="Completar" type="object" invisible="state not in ('draft', 'active')" class="btn-success"/>
+                    <button name="action_cancel" string="Cancelar" type="object" invisible="state == 'cancelled'"/>
+                    <button name="action_reset_to_draft" string="Volver a borrador" type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Microobjetivo"/>
+                        <h1><field name="name" placeholder="Nombre del microobjetivo..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="goal_id"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="team_member_ids" widget="many2many_avatar_user"/>
+                            <field name="category_id"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="priority" widget="priority"/>
+                            <field name="impact"/>
+                            <field name="weight"/>
+                            <field name="progress_mode"/>
+                            <field name="manual_progress" invisible="progress_mode != 'manual'"/>
+                            <field name="progress" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción">
+                            <field name="description" options="{'collaborative': true}"/>
+                        </page>
+                        <page string="Tareas">
+                            <field name="task_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_goals_micro_objective_search" model="ir.ui.view">
+        <field name="name">goals.micro.objective.search</field>
+        <field name="model">goals.micro.objective</field>
+        <field name="arch" type="xml">
+            <search string="Buscar microobjetivos">
+                <field name="name"/>
+                <field name="goal_id"/>
+                <field name="user_id"/>
+                <filter string="Activos" name="active_state" domain="[('state', '=', 'active')]"/>
+                <filter string="Vencidos" name="overdue" domain="[('is_overdue', '=', True)]"/>
+                <separator/>
+                <filter string="Objetivo semanal" name="group_goal" context="{'group_by': 'goal_id'}"/>
+                <filter string="Responsable" name="group_user" context="{'group_by': 'user_id'}"/>
+                <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_goals_micro_objective" model="ir.actions.act_window">
+        <field name="name">Microobjetivos</field>
+        <field name="res_model">goals.micro.objective</field>
+        <field name="view_mode">kanban,list,form,activity</field>
+        <field name="search_view_id" ref="view_goals_micro_objective_search"/>
+    </record>
+</odoo>

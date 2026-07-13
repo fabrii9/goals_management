@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="goals_management.Dashboard">
+        <Layout display="display">
+            <div class="o_goals_dashboard container-fluid p-4">
+                <div t-if="state.loading" class="text-center py-5">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                </div>
+                <div t-else="" class="row g-3">
+                    <!-- Objetivo anual -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-muted">Meta anual</h5>
+                                <h3 t-if="state.data.year_goal" t-esc="state.data.year_goal.name"/>
+                                <p t-else="" class="text-muted">Sin meta anual activa</p>
+                                <GoalsProgressBar value="yearProgress" label="Progreso" size="lg"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Objetivo semanal -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-muted">Objetivo semanal</h5>
+                                <h3 t-if="state.data.week_goal" t-esc="state.data.week_goal.name"/>
+                                <p t-else="" class="text-muted">Sin objetivo semanal activo</p>
+                                <GoalsProgressBar value="weekProgress" label="Progreso" size="lg"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gamificación -->
+                    <div t-if="hasGamification" class="col-12 col-md-6 col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-muted">Progreso de jugador</h5>
+                                <div class="d-flex justify-content-between align-items-end">
+                                    <div>
+                                        <div class="display-6 fw-bold" t-esc="user.goals_level"/>
+                                        <div class="text-muted small">Nivel</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fs-5 fw-bold" t-esc="user.goals_streak_days + ' días 🔥'"/>
+                                        <div class="text-muted small">Racha</div>
+                                    </div>
+                                </div>
+                                <GoalsProgressBar
+                                    value="user.goals_xp_in_current_level"
+                                    max="user.goals_xp_for_next_level - (user.goals_xp_total - user.goals_xp_in_current_level)"
+                                    label="XP"
+                                    size="md"/>
+                                <div class="text-muted small mt-1">
+                                    <span t-esc="user.goals_xp_total"/> XP total
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Focos del día -->
+                    <div class="col-12 col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <GoalsTodayFocus focusList="state.data.daily_focus" onChange.bind="fetchData"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de productividad -->
+                    <div class="col-12 col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-muted">Productividad (últimos 7 días)</h5>
+                                <div class="o_goals_chart d-flex align-items-end gap-2" style="height: 160px;">
+                                    <div t-foreach="productivityChart" t-as="item" t-key="item.date" class="o_goals_chart_bar flex-grow-1 d-flex flex-column align-items-center justify-content-end">
+                                        <span class="small text-muted" t-esc="item.completed"/>
+                                        <div class="o_goals_bar_fill bg-primary rounded-top" t-attf-style="height: {{item.height}}px; width: 100%;"></div>
+                                        <span class="small text-muted mt-1" t-esc="item.label"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Últimas tareas completadas -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title text-muted">Últimas tareas completadas</h5>
+                                <ul t-if="state.data.recent_tasks.length" class="list-group list-group-flush">
+                                    <li t-foreach="state.data.recent_tasks" t-as="task" t-key="task.id" class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <i class="fa fa-check-circle text-success me-2"/>
+                                            <span t-esc="task.name"/>
+                                            <span class="text-muted small ms-2">(<span t-esc="task.project"/>)</span>
+                                        </span>
+                                        <span class="text-muted small" t-esc="task.user"/>
+                                    </li>
+                                </ul>
+                                <p t-else="" class="text-muted">Aún no hay tareas completadas vinculadas a objetivos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    </t>
+</templates>

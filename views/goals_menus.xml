@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem
+        id="menu_goals_root"
+        name="Objetivos"
+        web_icon="goals_management,static/description/icon.png"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_goals_dashboard"
+        name="Dashboard"
+        parent="menu_goals_root"
+        action="action_goals_dashboard"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_goals_today"
+        name="Hoy"
+        parent="menu_goals_root"
+        action="action_goals_daily_focus"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_goals_objectives"
+        name="Objetivos"
+        parent="menu_goals_root"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_goals_year"
+        name="Metas Anuales"
+        parent="menu_goals_objectives"
+        action="action_goals_year"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_goals_quarter"
+        name="Trimestrales"
+        parent="menu_goals_objectives"
+        action="action_goals_quarter"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_goals_month"
+        name="Mensuales"
+        parent="menu_goals_objectives"
+        action="action_goals_month"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_goals_week"
+        name="Semanales"
+        parent="menu_goals_objectives"
+        action="action_goals_week"
+        sequence="40"/>
+
+    <menuitem
+        id="menu_goals_all"
+        name="Todos los objetivos"
+        parent="menu_goals_objectives"
+        action="action_goals_all"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_goals_micro_objectives"
+        name="Microobjetivos"
+        parent="menu_goals_root"
+        action="action_goals_micro_objective"
+        sequence="40"/>
+
+    <menuitem
+        id="menu_goals_configuration"
+        name="Configuración"
+        parent="menu_goals_root"
+        sequence="100"/>
+
+    <menuitem
+        id="menu_goals_categories"
+        name="Categorías"
+        parent="menu_goals_configuration"
+        action="action_goals_category"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_goals_tags"
+        name="Etiquetas"
+        parent="menu_goals_configuration"
+        action="action_goals_tag"
+        sequence="20"/>
+</odoo>

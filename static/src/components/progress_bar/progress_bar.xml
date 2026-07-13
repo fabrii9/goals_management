@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="goals_management.ProgressBar">
+        <div class="o_goals_progress_bar w-100">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span t-if="props.label" class="o_goals_progress_label text-muted small" t-esc="props.label"/>
+                <span class="o_goals_progress_value fw-bold small" t-esc="percentage + '%'"/>
+            </div>
+            <div class="progress" t-att-class="heightClass">
+                <div class="progress-bar" role="progressbar"
+                     t-att-aria-valuenow="percentage"
+                     aria-valuemin="0"
+                     t-att-aria-valuemax="props.max"
+                     t-attf-style="width: {{percentage}}%">
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

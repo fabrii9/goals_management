@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_goals" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.goals</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Objetivos" string="Objetivos" name="goals_management" logo="/base/static/description/settings.png">
+                    <block title="Gamificación" name="goals_gamification_setting_container">
+                        <setting id="goals_gamification_enabled" string="Activar gamificación" help="Otorga experiencia e insignias al completar tareas y objetivos.">
+                            <field name="goals_gamification_enabled"/>
+                        </setting>
+                        <setting id="goals_xp_values" string="Valores de XP" help="Cantidad de experiencia otorgada por cada tipo de logro.">
+                            <field name="goals_xp_task"/>
+                            <field name="goals_xp_micro"/>
+                            <field name="goals_xp_week"/>
+                            <field name="goals_xp_month"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
