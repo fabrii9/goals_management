@@ -19,3 +19,5 @@ access_goals_achievement_user,goals.achievement.user,model_goals_achievement,gro
 access_goals_achievement_manager,goals.achievement.manager,model_goals_achievement,group_goals_manager,1,1,1,1
 access_goals_link_task_wizard_user,goals.link.task.wizard.user,model_goals_link_task_wizard,group_goals_user,1,1,1,1
 access_goals_link_task_wizard_manager,goals.link.task.wizard.manager,model_goals_link_task_wizard,group_goals_manager,1,1,1,1
+access_goals_link_task_micro_wizard_user,goals.link.task.micro.wizard.user,model_goals_link_task_micro_wizard,group_goals_user,1,1,1,1
+access_goals_link_task_micro_wizard_manager,goals.link.task.micro.wizard.manager,model_goals_link_task_micro_wizard,group_goals_manager,1,1,1,1

@@ -27,6 +27,7 @@ y empresariales.
         'views/goals_category_views.xml',
         'views/goals_tag_views.xml',
         'views/goals_link_task_wizard_views.xml',
+        'views/goals_link_task_micro_wizard_views.xml',
         'views/goals_goal_views.xml',
         'views/goals_micro_objective_views.xml',
         'views/goals_daily_focus_views.xml',
