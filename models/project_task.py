@@ -88,8 +88,8 @@ class ProjectTask(models.Model):
             xp = int(self.env['ir.config_parameter'].sudo().get_param(
                 'goals_management.xp_task', default=10
             ))
-            if self.user_id:
-                self.user_id.goals_grant_xp(
+            for assignee in self.user_ids:
+                assignee.goals_grant_xp(
                     xp,
                     source='task_completed',
                     source_model='project.task',

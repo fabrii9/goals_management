@@ -77,7 +77,7 @@ class GoalsDashboardController(http.Controller):
                     'id': task.id,
                     'name': task.name,
                     'project': task.project_id.name,
-                    'user': task.user_id.name,
+                    'user': task.user_ids[:1].name if task.user_ids else '',
                     'date': task.date_last_stage_update.isoformat()
                     if task.date_last_stage_update else None,
                 }
@@ -117,8 +117,8 @@ class GoalsDashboardController(http.Controller):
             day = date_utils.add(start_date, days=i)
             data[day.isoformat()] = 0
         for task in tasks:
-            day = task.date_last_stage_update
-            if day:
+            if task.date_last_stage_update:
+                day = task.date_last_stage_update.date()
                 data[day.isoformat()] = data.get(day.isoformat(), 0) + 1
         return [
             {'date': day, 'completed': count}

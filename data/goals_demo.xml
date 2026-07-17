@@ -125,19 +125,19 @@
             <field name="name">Llamar cliente A</field>
             <field name="project_id" ref="project.project_project_1"/>
             <field name="micro_objective_id" ref="micro_demo_1"/>
-            <field name="user_id" ref="base.user_admin"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
         </record>
         <record id="task_demo_2" model="project.task">
             <field name="name">Llamar cliente B</field>
             <field name="project_id" ref="project.project_project_1"/>
             <field name="micro_objective_id" ref="micro_demo_1"/>
-            <field name="user_id" ref="base.user_admin"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
         </record>
         <record id="task_demo_3" model="project.task">
             <field name="name">Preparar presentación</field>
             <field name="project_id" ref="project.project_project_1"/>
             <field name="micro_objective_id" ref="micro_demo_2"/>
-            <field name="user_id" ref="base.user_admin"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
         </record>
     </data>
 </odoo>
